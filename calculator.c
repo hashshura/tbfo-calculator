@@ -21,7 +21,7 @@ void Pop(){
 	while (InfoTop() == BLANK);
 }
 
-void readln(char * s){
+void read_expression(){
 	
 	char c;
 	int idx = 0;
@@ -180,7 +180,7 @@ int main(){
 	while (true){
 		err = false;
 		printf("\n>> ");
-		readln(s);
+		read_expression();
 		top_idx = 0;
 		if (InfoTop() == ' ')
 			Pop();
