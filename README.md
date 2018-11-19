@@ -6,14 +6,13 @@ Done to fulfill IF2220 Formal Language Theory and Automata's Big Mission (or wha
 ## Current To-Do's:
 
 Edit this README.md if you have already fulfilled the task.
-* Check for and show wrong syntaxes.
-* (bonus) Allow imaginary number (i) operations.
+* Quality assurance by testing.
 
 ## Installation and Running
 * Make sure that GNU C is already installed on your computer.
-* To install the dependencies, execute:
+* To compile the source, execute:
 ``` bash
-calculator> ___compile
+calculator> gcc calculator.c -o Calculator
 ```
 * To run the program, execute:
 ``` bash
