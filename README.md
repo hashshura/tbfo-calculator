@@ -6,8 +6,7 @@ Done to fulfill IF2220 Formal Language Theory and Automata's Big Mission (or wha
 ## Current To-Do's:
 
 Edit this README.md if you have already fulfilled the task.
-* ALL DONE!
-* Testing.
+* Quality assurance by testing.
 
 ## Installation and Running
 * Make sure that GNU C is already installed on your computer.
