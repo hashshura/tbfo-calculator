@@ -1,89 +1,137 @@
 #include <math.h>
 #include <stdio.h>
-#include "mesintoken.h"
-#include "stackt.h"
+#include <stdbool.h>
 
-Stack S, S_Reversed;
-infotype P;
+#define BLANK ' '
+#define ENDL '\n'
+#define POINT '.'
 
-float parse_expression(Stack *tok);
-float parse_term(Stack *tok);
-float parse_factor(Stack *tok);
-float parse_item(Stack *tok);
+int top_idx;
+char s[1000005];
 
-float parse_expression(Stack *tok){
-	float result = parse_term(tok);
-	infotype t = InfoTop(*tok);
-	while ((t.symbol ==  '+') || (t.symbol == '-')){
-		Pop(tok);
-		float rhs = parse_term(tok);
-		if (t.symbol == '+') result = result + rhs;	
+char InfoTop(){
+	return s[top_idx];
+}
+
+void Pop(){
+	do {
+		top_idx++;
+	} while (InfoTop() == BLANK);
+}
+
+void readln(char * s){
+	
+	char c;
+	int idx = 0;
+	do {
+		scanf("%c", &c);
+		s[idx] = c;
+		idx++;
+	} while (c != ENDL);
+	
+}
+
+bool is_number(char x){
+	return (x >= '0' && x <= '9');
+}
+
+bool is_symbol(char x){
+	return (x == '+' || x == '-' || x == '*' || x == '/' || x == '^' || x == '(' || x == ')');
+}
+
+double parse_expression();
+double parse_term();
+double parse_factor();
+double parse_item();
+double parse_number();
+
+double parse_expression(){
+	double result = parse_term();
+	char t = InfoTop();
+	while ((t ==  '+') || (t == '-')){
+		Pop();
+		double rhs = parse_term();
+		if (t == '+') result = result + rhs;	
 			else result = result - rhs;
-		t = InfoTop(*tok);
+		t = InfoTop();
 	}
 	return result;
 }
 
-float parse_term(Stack *tok){
-	float result = parse_factor(tok);
-	infotype t = InfoTop(*tok);
-	while ((t.symbol ==  '*') || (t.symbol == '/')){
-		Pop(tok);
-		float rhs = parse_factor(tok);
-		if (t.symbol == '*') result = result * rhs;	
+double parse_term(){
+	double result = parse_factor();
+	char t = InfoTop();
+	while ((t ==  '*') || (t == '/')){
+		Pop();
+		double rhs = parse_factor();
+		if (t == '*') result = result * rhs;	
 			else result = result / rhs;
-		t = InfoTop(*tok);
+		t = InfoTop();
 	}
 	return result;
 }
 
-float parse_factor(Stack *tok){
-	infotype t = InfoTop(*tok);
-	if((t.symbol == '+') || (t.symbol == '-'))
-		Pop(tok);
-	float result = parse_item(tok);
-	if(t.symbol == '-'){
+double parse_factor(){
+	char t = InfoTop();
+	if ((t == '+') || (t == '-'))
+		Pop();
+	double result = parse_item();
+	if (t == '-')
 		result *= -1;
-	}
-	t = InfoTop(*tok);
-	if(t.symbol == '^'){
-		Pop(tok);
-		result = pow(result, parse_factor(tok));
+	t = InfoTop();
+	if (t == '^'){
+		Pop();
+		result = pow(result, parse_factor());
 	}
 	return result;
 }
 
-float parse_item(Stack *tok){
-	infotype t = InfoTop(*tok);
-	float result;
-	if(t.symbol == 'b'){
-		result = t.value;
-		Pop(tok);
-	} else if(t.symbol == '('){
-		Pop(tok);
-		result = parse_expression(tok);
-		Pop(tok);
+double parse_item(){
+	char t = InfoTop();
+	double result;
+	if (is_number(t)){
+		result = parse_number();
+	} else if (t == '('){
+		Pop();
+		result = parse_expression();
+		if (InfoTop() == ')')
+			Pop();
 	}
+	return result;
+}
+
+double parse_number(){
+	bool comma = false;
+	bool stop = false;
+	double result = 0;
+	do {
+		result *= 10;
+		result += (int) InfoTop() - '0';
+		Pop();
+		stop = ((InfoTop() == ENDL) || (InfoTop() == BLANK) || (InfoTop() == POINT) || (is_symbol(InfoTop())));
+	} while (!stop);
+	
+	if (InfoTop() == '.'){
+		stop = true;
+		double comma_param = 0.1;
+		Pop();
+		do {
+			result += comma_param * ((int) InfoTop() - '0');
+			comma_param *= 0.1;
+			Pop();
+			stop = ((InfoTop() == ENDL) || (InfoTop() == BLANK) || (is_symbol(InfoTop())));
+		} while (!stop);
+	}
+	
 	return result;
 }
 
 int main(){
 	
-	CreateEmpty(&S);
-	STARTTOKEN();
-	while (!EndToken){
-		P.symbol = CToken.symbol;
-		P.value = CToken.value;
-		Push(&S, P);
-		ADVTOKEN();
-	}
-	
-	CreateEmpty(&S_Reversed);
-	while (!IsEmpty(S)){
-		Push(&S_Reversed, InfoTop(S));
-		Pop(&S);
-	}
-	
-	printf("%f\n", parse_expression(&S_Reversed));
+	readln(s);
+	top_idx = 0;
+	if (InfoTop() == ' ')
+		Pop();
+	printf("%lf\n", parse_expression());
 	
 }

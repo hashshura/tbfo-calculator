@@ -1,1 +1,1 @@
-gcc calculator.c mesintoken.c stackt.c -o Calculator
+gcc calculator.c -o Calculator
