@@ -150,7 +150,8 @@ double complex parse_number(){
 		Pop();
 		do {
 			if (!is_number(InfoTop())){
-				syntax_error("operator or 'i'");
+				if (is_symbol(InfoTop())) syntax_error("number");
+					else syntax_error("operator or 'i'");
 				return 0;
 			}
 			result += comma_param * ((int) InfoTop() - '0');
