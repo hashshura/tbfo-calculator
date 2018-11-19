@@ -10,7 +10,7 @@ Edit this README.md if you have already fulfilled the task.
 
 ## Installation and Running
 * Make sure that GNU C is already installed on your computer.
-* To install the dependencies, execute:
+* To compile the source, execute:
 ``` bash
 calculator> ___compile
 ```
