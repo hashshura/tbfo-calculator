@@ -12,7 +12,7 @@ Edit this README.md if you have already fulfilled the task.
 * Make sure that GNU C is already installed on your computer.
 * To compile the source, execute:
 ``` bash
-calculator> ___compile
+calculator> gcc calculator.c -o Calculator
 ```
 * To run the program, execute:
 ``` bash
