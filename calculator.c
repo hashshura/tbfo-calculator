@@ -42,13 +42,25 @@ bool is_symbol(char x){
 	return (x == '+' || x == '-' || x == '*' || x == '/' || x == '^' || x == '(' || x == ')' || x == ' ' || x == BLANK || x == ENDL || x == POINT || x == IMAG);
 }
 
-void syntax_error(char * expected){
+double complex syntax_error(char * expected){
 	
 	for (int i = 0; i < top_idx + 3; i++)
 		printf(" ");
 	printf("^\n");
-	printf("Syntax Error: Expected %s, found '%c'.\n", expected, s[top_idx]);
+	printf("[!] SYNTAX ERROR: Expected %s, found '%c'.\n", expected, s[top_idx]);
 	err = true;
+	return 0;
+	
+}
+
+double complex math_error(char * msg){
+	
+	for (int i = 0; i < top_idx + 3; i++)
+		printf(" ");
+	printf("^\n");
+	printf("[!] MATH ERROR: %s.\n", msg);
+	err = true;
+	return 0;
 	
 }
 
@@ -79,10 +91,17 @@ double complex parse_term(){
 	char t = InfoTop();
 	while ((t ==  '*') || (t == '/')){
 		Pop();
+		int top_idx_tmp = top_idx;
 		double complex rhs = parse_factor();
 		if (err) return 0;
 		if (t == '*') result = result * rhs;	
-			else result = result / rhs;
+			else {
+				result = result / rhs;
+				if (rhs == 0){
+					top_idx = top_idx_tmp;
+					return math_error("Divide by zero");
+				}
+			}
 		t = InfoTop();
 	}
 	return result;
@@ -99,7 +118,13 @@ double complex parse_factor(){
 	t = InfoTop();
 	if (t == '^'){
 		Pop();
-		result = cpowl(result, parse_factor());
+		int top_idx_tmp = top_idx;
+		double complex rhs = parse_factor();
+		if (result == 0 && rhs == 0){
+			top_idx = top_idx_tmp;
+			return math_error("Zero to the power of zero");
+		}
+		result = cpowl(result, rhs);
 		if (err) return 0;
 	}
 	return result;
@@ -117,14 +142,10 @@ double complex parse_item(){
 		if (err) return 0;
 		if (InfoTop() == ')')
 			Pop();
-		else {
-			syntax_error("')'");
-			return 0;
-		}
-	} else {
-		syntax_error("number or expression");
-		return 0;
-	}
+		else 
+			return syntax_error("')'");
+	} else
+		return syntax_error("number or expression");
 	return result;
 }
 
@@ -136,10 +157,8 @@ double complex parse_number(){
 	}
 	
 	do {
-		if (!is_number(InfoTop())){
-			syntax_error("operator, '.', or 'i'");
-			return 0;
-		}
+		if (!is_number(InfoTop()))
+			return syntax_error("operator, '.', or 'i'");
 		result *= 10;
 		result += (int) InfoTop() - '0';
 		Pop();
@@ -150,9 +169,8 @@ double complex parse_number(){
 		Pop();
 		do {
 			if (!is_number(InfoTop())){
-				if (is_symbol(InfoTop())) syntax_error("number");
-					else syntax_error("operator or 'i'");
-				return 0;
+				if (is_symbol(InfoTop())) return syntax_error("number");
+					else return syntax_error("operator or 'i'");
 			}
 			result += comma_param * ((int) InfoTop() - '0');
 			comma_param *= 0.1;
@@ -186,9 +204,6 @@ int main(){
 		double complex result = parse_expression();
 		if (!err && s[top_idx] != ENDL){
 			syntax_error("end of expression");
-		} else if (result != result){
-			printf("Math Error: Resulted answer is NaN.\n");
-			err = true;
 		} else if (!err) {
 			printf("%s = ", s);
 			printf("%lf", creal(result));
