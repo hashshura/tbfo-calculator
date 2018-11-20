@@ -109,7 +109,7 @@ double complex parse_term(){
 
 double complex parse_factor(){
 	char t = InfoTop();
-	if ((t == '+') || (t == '-'))
+	if (t == '-')
 		Pop();
 	double complex result = parse_item();
 	if (err) return 0;
