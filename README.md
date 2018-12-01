@@ -1,4 +1,4 @@
-# calculator
+# tbfo-calculator
 
 An application made with C to input a valid mathematical operation and then show the answer.
 Done to fulfill IF2220 Formal Language Theory and Automata's Big Mission (or whatever Tugas Besar is called).
@@ -18,10 +18,8 @@ A -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 ```
 **Hints**: _S(tart), E(xpression), T(erm), F(actor), I(tem), N(umber), R(eal), D(igits), A(\_digit)_
 
-## Current To-Do's:
-
-Edit this README.md if you have already fulfilled the task.
-* Quality assurance by testing.
+## Known Bug(s)
+* `2i^2` is treated as `(2i)^2` instead of `2*(i^2)`.
 
 ## Installation and Running
 * Make sure that GNU C is already installed on your computer.
