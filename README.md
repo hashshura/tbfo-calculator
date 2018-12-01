@@ -8,7 +8,7 @@ Done to fulfill IF2220 Formal Language Theory and Automata's Big Mission (or wha
 S -> E 
 E -> T | T+E| T-E 
 T -> F | F*T | F/T 
-F -> I | +I | -I | F^F 
+F -> I | -I | F^F 
 I -> N | (E) 
 
 N -> R | Ri | i 
